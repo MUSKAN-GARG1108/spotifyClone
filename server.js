@@ -44,22 +44,28 @@ app.get("/playlists", (req, res) => {
 
 // 🎵 Get all songs from a specific playlist
 app.get("/playlists/:playlist", (req, res) => {
-    const playlistName = req.params.playlist;
-    const playlistPath = path.join(__dirname, "songs", playlistName);
+    let playlistName = req.params.playlist;
+    const songsPath = path.join(__dirname, "songs");
 
-    // ✅ Check if the playlist folder exists
-    if (!fs.existsSync(playlistPath)) {
+    // ✅ Normalize playlist name (handle spaces and case sensitivity)
+    const availablePlaylists = fs.readdirSync(songsPath).map(folder => folder.toLowerCase());
+
+    if (!availablePlaylists.includes(playlistName.toLowerCase())) {
         return res.status(404).json({ error: `Playlist '${playlistName}' not found` });
     }
+
+    // Find the correct folder name
+    let actualFolderName = fs.readdirSync(songsPath).find(folder => folder.toLowerCase() === playlistName.toLowerCase());
+
+    const playlistPath = path.join(songsPath, actualFolderName);
 
     fs.readdir(playlistPath, (err, files) => {
         if (err) return res.status(500).json({ error: "Error reading songs" });
 
         const songs = files.filter(file => file.endsWith(".mp3"));
 
-        // ✅ Return a proper error message if no songs exist
         if (songs.length === 0) {
-            return res.status(404).json({ error: `No songs found in '${playlistName}' playlist` });
+            return res.status(404).json({ error: `No songs found in '${actualFolderName}' playlist` });
         }
 
         res.json(songs);
