@@ -45,21 +45,25 @@ async function loadPlaylists() {
 
 // 🎵 Load Songs when a Playlist is Clicked
 async function loadSongs(playlist) {
-    songContainer.innerHTML = "<p>Loading songs...</p>";
+    songContainer.innerHTML = "";
     currentPlaylist = playlist;
 
     try {
-        const response = await fetch(`${backendURL}/songs/${playlist}/`);
-        if (!response.ok) throw new Error(`Failed to load songs for ${playlist}`);
+        const response = await fetch(`${backendURL}/playlists/${playlist}`);
+        if (!response.ok) {
+            throw new Error(`Playlist not found: ${playlist}`);
+        }
 
-        const text = await response.text();
-        let matches = text.match(/href="([^"]+\.mp3)"/g) || [];
-        let songs = matches.map(m => m.replace(/href="|"/g, ""));
+        const songs = await response.json();
 
-        songContainer.innerHTML = ""; // Clear song list
+        if (songs.error) {
+            console.error(songs.error);
+            songContainer.innerHTML = `<p class="error-message">${songs.error}</p>`;
+            return;
+        }
 
         if (songs.length === 0) {
-            songContainer.innerHTML = "<p>No songs found</p>";
+            songContainer.innerHTML = `<p class="error-message">No songs available in this playlist</p>`;
             return;
         }
 
@@ -71,10 +75,11 @@ async function loadSongs(playlist) {
         });
 
     } catch (error) {
-        songContainer.innerHTML = "<p>Error loading songs</p>";
-        console.error(error);
+        console.error(`Failed to load songs for ${playlist}:`, error);
+        songContainer.innerHTML = `<p class="error-message">Failed to load songs</p>`;
     }
 }
+
 
 // ▶ Play a Song
 function playSong(playlist, song) {
