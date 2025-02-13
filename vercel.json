@@ -2,7 +2,10 @@
   "routes": [
     {
       "src": "/songs/(.*)",
-      "dest": "/public/songs/$1"
+      "dest": "/songs/$1",
+      "headers": {
+        "Cache-Control": "public, max-age=31536000, immutable"
+      }
     }
   ]
 }
