@@ -7,24 +7,39 @@ let currentPlaylist = "";
 
 // 🚀 Load Playlists with Cover, Title, and Description
 async function loadPlaylists() {
-    playlistContainer.innerHTML = "";
-    const response = await fetch(`${backendURL}/playlists`);
-    const playlists = await response.json();
+    const playlistsContainer = document.querySelector('.cardContainer');
+    playlistsContainer.innerHTML = '';
 
-    playlists.forEach(playlist => {
-        const div = document.createElement("div");
-        div.classList.add("card");
+    const playlists = [
+        "Angry_(mood)", "Bright_(mood)", "Chill_(mood)", "Dark_(mood)",
+        "Diljit", "Funky_(mood)", "Love_(mood)", "Uplifting_(mood)", "cs", "karan aujla", "ncs"
+    ];
 
-        div.innerHTML = `
-            <img src="${playlist.cover}" alt="${playlist.title}" class="playlist-cover">
-            <h3>${playlist.title}</h3>
-            <p>${playlist.description}</p>
-        `;
+    for (let playlist of playlists) {
+        try {
+            // Fetch the playlist info.json
+            let response = await fetch(`songs/${playlist}/info.json`);
+            let data = await response.json();
 
-        div.onclick = () => loadSongs(playlist.name);
-        playlistContainer.appendChild(div);
-    });
+            // Create the playlist card
+            let card = document.createElement('div');
+            card.classList.add('card');
+            card.innerHTML = `
+                <img src="songs/${playlist}/cover.jpg" alt="${data.title}" class="cover-img">
+                <h3>${data.title}</h3>
+                <p>${data.description}</p>
+            `;
+
+            // Append to container
+            playlistsContainer.appendChild(card);
+        } catch (error) {
+            console.error(`Failed to load ${playlist}:`, error);
+        }
+    }
 }
+
+// Load playlists on page load
+document.addEventListener("DOMContentLoaded", loadPlaylists);
 
 // 🎵 Load Songs when a Playlist is Clicked
 async function loadSongs(playlist) {
