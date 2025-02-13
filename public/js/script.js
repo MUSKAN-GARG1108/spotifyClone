@@ -5,7 +5,7 @@ const songInfo = document.querySelector(".songinfo");
 const audioPlayer = new Audio();
 let currentPlaylist = "";
 
-// 🚀 Load Playlists
+// 🚀 Load Playlists with Cover, Title, and Description
 async function loadPlaylists() {
     playlistContainer.innerHTML = "";
     const response = await fetch(`${backendURL}/playlists`);
@@ -14,8 +14,14 @@ async function loadPlaylists() {
     playlists.forEach(playlist => {
         const div = document.createElement("div");
         div.classList.add("card");
-        div.innerHTML = `<h3>${playlist}</h3>`;
-        div.onclick = () => loadSongs(playlist);
+
+        div.innerHTML = `
+            <img src="${playlist.cover}" alt="${playlist.title}" class="playlist-cover">
+            <h3>${playlist.title}</h3>
+            <p>${playlist.description}</p>
+        `;
+
+        div.onclick = () => loadSongs(playlist.name);
         playlistContainer.appendChild(div);
     });
 }
