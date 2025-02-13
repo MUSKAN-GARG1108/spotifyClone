@@ -1,4 +1,12 @@
 {
-    "title": "Sleep Songs",
-    "description": "Songs for you"
+    "title": "NCS Playlist",
+    "description": "Best NCS Tracks",
+    "songs": [
+        "Jo Tum Mere Ho - Anuv Jain.mp3",
+        "Softly - Making Memories.mp3",
+        "song1.mp3",
+        "Tauba Tauba - Bad Newz.mp3",
+        "Tu Hain Toh - Mr. And Mrs. Mahi.mp3",
+        "Ve Kamleya - Rocky Aur Rani Kii Prem Kahani.mp3"
+    ]
 }
