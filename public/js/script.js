@@ -91,19 +91,42 @@ function playSong(index) {
     playButton.src = "img/pause.svg"; // Change play button to pause
 }
 
-// ⏭ Next Song
-nextButton.addEventListener("click", () => {
-    if (currentIndex < currentSongs.length - 1) {
-        playSong(currentIndex + 1);
+// // ⏭ Next Song
+// nextButton.addEventListener("click", () => {
+//     if (currentIndex < currentSongs.length - 1) {
+//         playSong(currentIndex + 1);
+//     }
+// });
+
+// // ⏮ Previous Song
+// prevButton.addEventListener("click", () => {
+//     if (currentIndex > 0) {
+//         playSong(currentIndex - 1);
+//     }
+// });
+
+
+// Next & Previous Button Fix
+document.getElementById("next").addEventListener("click", () => {
+    let currentIndex = songs.findIndex(song => 
+        decodeURIComponent(song) === decodeURIComponent(currentSong.src.split("/").pop())
+    );
+
+    if (currentIndex !== -1 && currentIndex + 1 < songs.length) {
+        playMusic(songs[currentIndex + 1]);
     }
 });
 
-// ⏮ Previous Song
-prevButton.addEventListener("click", () => {
+document.getElementById("previous").addEventListener("click", () => {
+    let currentIndex = songs.findIndex(song => 
+        decodeURIComponent(song) === decodeURIComponent(currentSong.src.split("/").pop())
+    );
+
     if (currentIndex > 0) {
-        playSong(currentIndex - 1);
+        playMusic(songs[currentIndex - 1]);
     }
 });
+
 
 // ⏯ Play/Pause Button
 playButton.addEventListener("click", () => {
@@ -118,3 +141,63 @@ playButton.addEventListener("click", () => {
 
 // 🌟 Load Playlists on Page Load
 window.onload = loadPlaylists;
+
+
+// Main function
+async function main() {
+    await getSongs("songs/ncs");
+    playMusic(songs[0], true);
+    await displayAlbums();
+
+    // Play/Pause Button
+    document.getElementById("play").addEventListener("click", () => {
+        if (currentSong.paused) {
+            currentSong.play();
+            document.getElementById("play").src = "img/pause.svg";
+        } else {
+            currentSong.pause();
+            document.getElementById("play").src = "img/play.svg";
+        }
+    });
+
+    // Update song time and progress bar
+    currentSong.addEventListener("timeupdate", () => {
+        document.querySelector(".songtime").innerHTML = 
+            `${secondsToMinutesSeconds(currentSong.currentTime)} / ${secondsToMinutesSeconds(currentSong.duration)}`;
+        document.querySelector(".circle").style.left = (currentSong.currentTime / currentSong.duration) * 100 + "%";
+    });
+
+    // Seekbar functionality
+    document.querySelector(".seekbar").addEventListener("click", e => {
+        let percent = (e.offsetX / e.target.getBoundingClientRect().width) * 100;
+        document.querySelector(".circle").style.left = percent + "%";
+        currentSong.currentTime = (currentSong.duration * percent) / 100;
+    });
+
+    // Volume Control
+    document.querySelector(".range input").addEventListener("change", (e) => {
+        currentSong.volume = e.target.value / 100;
+        document.querySelector(".volume img").src = currentSong.volume > 0 ? "img/volume.svg" : "img/mute.svg";
+    });
+
+    // Mute/Unmute Button
+    let lastVolume = 1.0; // Store last volume
+
+    document.querySelector(".volume img").addEventListener("click", (e) => {
+        if (e.target.src.includes("volume.svg")) {
+            lastVolume = currentSong.volume;  // Store current volume
+            e.target.src = "img/mute.svg";
+            currentSong.volume = 0;
+            document.querySelector(".range input").value = 0;
+        } else {
+            e.target.src = "img/volume.svg";
+            currentSong.volume = lastVolume;  // Restore previous volume
+            document.querySelector(".range input").value = lastVolume * 100;
+        }
+    });
+
+
+
+}
+
+main();
