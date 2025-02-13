@@ -54,7 +54,7 @@ async function loadSongs(playlist) {
     currentIndex = 0;
 
     try {
-        const response = await fetch(`${backendURL}/songs/${encodeURIComponent(playlist)}/info.json`);
+        const response = await fetch(`${backendURL}/songs/${playlist}/info.json`);
         if (!response.ok) throw new Error(`Playlist not found: ${playlist}`);
 
         const playlistData = await response.json();
