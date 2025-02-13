@@ -14,8 +14,16 @@ app.use("/songs", express.static(path.join(__dirname, "songs")));
 app.get("/playlists", (req, res) => {
     const songsPath = path.join(__dirname, "songs");
 
+    // 🚨 Check if 'songs' directory exists
+    if (!fs.existsSync(songsPath)) {
+        return res.status(500).json({ error: "Songs directory not found" });
+    }
+
     fs.readdir(songsPath, (err, files) => {
-        if (err) return res.status(500).json({ error: "Error reading playlists" });
+        if (err) {
+            console.error("Error reading playlists:", err);
+            return res.status(500).json({ error: "Error reading playlists" });
+        }
 
         const playlists = files
             .filter(file => fs.lstatSync(path.join(songsPath, file)).isDirectory())
@@ -41,6 +49,45 @@ app.get("/playlists", (req, res) => {
         res.json(playlists);
     });
 });
+app.get("/playlists", (req, res) => {
+    const songsPath = path.join(__dirname, "songs");
+
+    // 🚨 Check if 'songs' directory exists
+    if (!fs.existsSync(songsPath)) {
+        return res.status(500).json({ error: "Songs directory not found" });
+    }
+
+    fs.readdir(songsPath, (err, files) => {
+        if (err) {
+            console.error("Error reading playlists:", err);
+            return res.status(500).json({ error: "Error reading playlists" });
+        }
+
+        const playlists = files
+            .filter(file => fs.lstatSync(path.join(songsPath, file)).isDirectory())
+            .map(playlist => {
+                const infoPath = path.join(songsPath, playlist, "info.json");
+                const coverPath = `/songs/${encodeURIComponent(playlist)}/cover.jpg`;
+
+                let info = { title: playlist, description: "No description available" };
+
+                if (fs.existsSync(infoPath)) {
+                    const data = fs.readFileSync(infoPath, "utf-8");
+                    info = JSON.parse(data);
+                }
+
+                return {
+                    name: playlist,
+                    title: info.title || playlist,
+                    description: info.description || "No description available",
+                    cover: coverPath
+                };
+            });
+
+        res.json(playlists);
+    });
+});
+
 
 // 🎵 Get all songs from a specific playlist
 app.get("/playlists/:playlist", (req, res) => {
