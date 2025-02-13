@@ -7,54 +7,73 @@ let currentPlaylist = "";
 
 // 🚀 Load Playlists with Cover, Title, and Description
 async function loadPlaylists() {
-    const playlistsContainer = document.querySelector('.cardContainer');
-    playlistsContainer.innerHTML = '';
+    playlistContainer.innerHTML = ''; // Clear existing playlists
 
     const playlists = [
         "Angry_(mood)", "Bright_(mood)", "Chill_(mood)", "Dark_(mood)",
-        "Diljit", "Funky_(mood)", "Love_(mood)", "Uplifting_(mood)", "cs", "karan aujla", "ncs"
+        "Diljit", "Funky_(mood)", "Love_(mood)", "Uplifting_(mood)", "cs", "karan_aujla", "ncs"
     ];
 
     for (let playlist of playlists) {
         try {
             // Fetch the playlist info.json
-            let response = await fetch(`songs/${playlist}/info.json`);
+            let response = await fetch(`${backendURL}/songs/${playlist}/info.json`);
+            if (!response.ok) throw new Error(`Playlist info not found: ${playlist}`);
+
             let data = await response.json();
 
             // Create the playlist card
             let card = document.createElement('div');
             card.classList.add('card');
             card.innerHTML = `
-                <img src="songs/${playlist}/cover.jpg" alt="${data.title}" class="cover-img">
+                <img src="${backendURL}/songs/${playlist}/cover.jpg" 
+                     alt="${data.title}" 
+                     class="cover-img" 
+                     onerror="this.src='img/default-cover.jpg'">
                 <h3>${data.title}</h3>
                 <p>${data.description}</p>
             `;
+            card.addEventListener("click", () => loadSongs(playlist));
 
             // Append to container
-            playlistsContainer.appendChild(card);
+            playlistContainer.appendChild(card);
         } catch (error) {
             console.error(`Failed to load ${playlist}:`, error);
         }
     }
 }
 
-// Load playlists on page load
-document.addEventListener("DOMContentLoaded", loadPlaylists);
-
 // 🎵 Load Songs when a Playlist is Clicked
 async function loadSongs(playlist) {
-    songContainer.innerHTML = "";
+    songContainer.innerHTML = "<p>Loading songs...</p>";
     currentPlaylist = playlist;
 
-    const response = await fetch(`${backendURL}/playlists/${playlist}`);
-    const songs = await response.json();
+    try {
+        const response = await fetch(`${backendURL}/songs/${playlist}/`);
+        if (!response.ok) throw new Error(`Failed to load songs for ${playlist}`);
 
-    songs.forEach(song => {
-        const li = document.createElement("li");
-        li.innerText = song.replace(".mp3", "");
-        li.onclick = () => playSong(playlist, song);
-        songContainer.appendChild(li);
-    });
+        const text = await response.text();
+        let matches = text.match(/href="([^"]+\.mp3)"/g) || [];
+        let songs = matches.map(m => m.replace(/href="|"/g, ""));
+
+        songContainer.innerHTML = ""; // Clear song list
+
+        if (songs.length === 0) {
+            songContainer.innerHTML = "<p>No songs found</p>";
+            return;
+        }
+
+        songs.forEach(song => {
+            const li = document.createElement("li");
+            li.innerText = song.replace(".mp3", "");
+            li.onclick = () => playSong(playlist, song);
+            songContainer.appendChild(li);
+        });
+
+    } catch (error) {
+        songContainer.innerHTML = "<p>Error loading songs</p>";
+        console.error(error);
+    }
 }
 
 // ▶ Play a Song
