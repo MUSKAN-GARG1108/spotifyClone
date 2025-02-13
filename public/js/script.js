@@ -6,9 +6,10 @@ const audioPlayer = new Audio();
 const playButton = document.getElementById("play");
 const nextButton = document.getElementById("next");
 const prevButton = document.getElementById("previous");
+
 let currentPlaylist = "";
-let songsList = [];
-let currentSongIndex = 0;
+let currentSongs = [];
+let currentIndex = 0;
 
 // 🚀 Load Playlists with Cover, Title, and Description
 async function loadPlaylists() {
@@ -21,13 +22,11 @@ async function loadPlaylists() {
 
     for (let playlist of playlists) {
         try {
-            // Fetch the playlist info.json
             let response = await fetch(`${backendURL}/songs/${playlist}/info.json`);
             if (!response.ok) throw new Error(`Playlist info not found: ${playlist}`);
 
             let data = await response.json();
 
-            // Create the playlist card
             let card = document.createElement('div');
             card.classList.add('card');
             card.innerHTML = `
@@ -40,7 +39,6 @@ async function loadPlaylists() {
             `;
             card.addEventListener("click", () => loadSongs(playlist));
 
-            // Append to container
             playlistContainer.appendChild(card);
         } catch (error) {
             console.error(`Failed to load ${playlist}:`, error);
@@ -48,41 +46,33 @@ async function loadPlaylists() {
     }
 }
 
-// 🎵 Load Songs when a Playlist is Clicked
+// 🎵 Load Songs & Auto-Play First Song
 async function loadSongs(playlist) {
     songContainer.innerHTML = "";
     currentPlaylist = playlist;
-    currentSongIndex = 0; // Reset index when loading a new playlist
+    currentSongs = [];
+    currentIndex = 0;
 
     try {
-        const response = await fetch(`${backendURL}/playlists/${encodeURIComponent(playlist)}`);
-        
-        if (!response.ok) {
-            throw new Error(`Playlist not found: ${playlist}`);
-        }
+        const response = await fetch(`${backendURL}/songs/${encodeURIComponent(playlist)}/info.json`);
+        if (!response.ok) throw new Error(`Playlist not found: ${playlist}`);
 
-        songsList = await response.json();
+        const playlistData = await response.json();
+        currentSongs = playlistData.songs;
 
-        if (songsList.error) {
-            console.error(songsList.error);
-            songContainer.innerHTML = `<p class="error-message">${songsList.error}</p>`;
-            return;
-        }
-
-        if (songsList.length === 0) {
+        if (!currentSongs || currentSongs.length === 0) {
             songContainer.innerHTML = `<p class="error-message">No songs available in this playlist</p>`;
             return;
         }
 
-        songsList.forEach((song, index) => {
+        currentSongs.forEach((song, index) => {
             const li = document.createElement("li");
             li.innerText = song.replace(".mp3", "");
             li.onclick = () => playSong(index);
             songContainer.appendChild(li);
         });
 
-        // Auto-play the first song
-        playSong(0);
+        playSong(0); // Auto-play first song
 
     } catch (error) {
         console.error(`Failed to load songs for ${playlist}:`, error);
@@ -90,44 +80,41 @@ async function loadSongs(playlist) {
     }
 }
 
-// ▶ Play a Song
+// ▶ Play a Song & Update Buttons
 function playSong(index) {
-    if (index < 0 || index >= songsList.length) return; // Prevent out-of-bounds errors
+    if (index < 0 || index >= currentSongs.length) return;
 
-    currentSongIndex = index;
-    const song = songsList[index];
-
-    audioPlayer.src = `${backendURL}/songs/${currentPlaylist}/${song}`;
+    currentIndex = index;
+    audioPlayer.src = `${backendURL}/songs/${currentPlaylist}/${currentSongs[currentIndex]}`;
     audioPlayer.play();
-    
-    songInfo.innerText = `Playing: ${song.replace(".mp3", "")}`;
-    playButton.src = "img/pause.svg"; // Update to pause icon
+    songInfo.innerText = `Playing: ${currentSongs[currentIndex].replace(".mp3", "")}`;
+    playButton.src = "img/pause.svg"; // Change play button to pause
 }
 
 // ⏭ Next Song
-nextButton.onclick = function () {
-    if (currentSongIndex < songsList.length - 1) {
-        playSong(currentSongIndex + 1);
+nextButton.addEventListener("click", () => {
+    if (currentIndex < currentSongs.length - 1) {
+        playSong(currentIndex + 1);
     }
-};
+});
 
 // ⏮ Previous Song
-prevButton.onclick = function () {
-    if (currentSongIndex > 0) {
-        playSong(currentSongIndex - 1);
+prevButton.addEventListener("click", () => {
+    if (currentIndex > 0) {
+        playSong(currentIndex - 1);
     }
-};
+});
 
 // ⏯ Play/Pause Button
-playButton.onclick = function () {
+playButton.addEventListener("click", () => {
     if (audioPlayer.paused) {
         audioPlayer.play();
-        playButton.src = "img/pause.svg"; // Change icon to pause
+        playButton.src = "img/pause.svg";
     } else {
         audioPlayer.pause();
-        playButton.src = "img/play.svg"; // Change icon to play
+        playButton.src = "img/play.svg";
     }
-};
+});
 
 // 🌟 Load Playlists on Page Load
 window.onload = loadPlaylists;
