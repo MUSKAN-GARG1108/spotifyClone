@@ -8,17 +8,36 @@ const PORT = 3000;
 
 app.use(cors());
 app.use(express.static("public"));
-
-// Serve songs from all playlists
 app.use("/songs", express.static(path.join(__dirname, "songs")));
 
-// 📂 Get all playlists (folders inside /songs)
+// 📂 Get all playlists with cover, title, and description
 app.get("/playlists", (req, res) => {
     const songsPath = path.join(__dirname, "songs");
+
     fs.readdir(songsPath, (err, files) => {
         if (err) return res.status(500).json({ error: "Error reading playlists" });
 
-        const playlists = files.filter(file => fs.lstatSync(path.join(songsPath, file)).isDirectory());
+        const playlists = files
+            .filter(file => fs.lstatSync(path.join(songsPath, file)).isDirectory())
+            .map(playlist => {
+                const infoPath = path.join(songsPath, playlist, "info.json");
+                const coverPath = `/songs/${playlist}/cover.jpg`;
+
+                let info = { title: playlist, description: "No description available" };
+
+                if (fs.existsSync(infoPath)) {
+                    const data = fs.readFileSync(infoPath, "utf-8");
+                    info = JSON.parse(data);
+                }
+
+                return {
+                    name: playlist,
+                    title: info.title || playlist,
+                    description: info.description || "No description available",
+                    cover: coverPath
+                };
+            });
+
         res.json(playlists);
     });
 });
