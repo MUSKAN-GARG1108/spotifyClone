@@ -8,7 +8,7 @@ let currentPlaylist = "";
 // 🚀 Load Playlists with Cover, Title, and Description
 async function loadPlaylists() {
     playlistContainer.innerHTML = "";
-    const response = await fetch(`${backendURL}/playlists`);
+    const response = await fetch(`${backendURL}/songs`);
     const playlists = await response.json();
 
     playlists.forEach(playlist => {
