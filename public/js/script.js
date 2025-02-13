@@ -49,7 +49,8 @@ async function loadSongs(playlist) {
     currentPlaylist = playlist;
 
     try {
-        const response = await fetch(`${backendURL}/playlists/${playlist}`);
+        const response = await fetch(`${backendURL}/playlists/${encodeURIComponent(playlist)}`);
+        
         if (!response.ok) {
             throw new Error(`Playlist not found: ${playlist}`);
         }
