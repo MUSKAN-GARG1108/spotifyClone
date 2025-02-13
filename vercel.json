@@ -2,7 +2,7 @@
   "routes": [
     {
       "src": "/songs/(.*)",
-      "dest": "/songs/$1"
+      "dest": "/public/songs/$1"
     }
   ]
 }
