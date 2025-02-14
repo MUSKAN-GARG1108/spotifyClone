@@ -21,20 +21,18 @@ const closeBtn = document.querySelector(".close-btn");
 const leftPanel = document.querySelector(".left");
 
 hamburger.addEventListener("click", () => {
-    leftPanel.classList.add("show");
+    leftPanel.classList.add("show"); // Show menu
 });
 
 closeBtn.addEventListener("click", () => {
-    leftPanel.classList.remove("show");
+    leftPanel.classList.remove("show"); // Hide menu
 });
 
 // 🚀 Load Playlists
 async function loadPlaylists() {
-    playlistContainer.innerHTML = '';
+    playlistContainer.innerHTML = ''; 
 
-    const playlists = [
-        "Diljit", "karan_aujla", "ncs", "Flute_Music"
-    ];
+    const playlists = ["Diljit", "karan_aujla", "ncs", "Flute_Music"];
 
     for (let playlist of playlists) {
         try {
@@ -110,7 +108,12 @@ function playSong() {
 }
 
 // ⏭ Next Song
-nextButton.addEventListener("click", playNextSong);
+nextButton.addEventListener("click", () => {
+    if (songIndex < currentSongs.length - 1) {
+        songIndex++;
+        playSong();
+    }
+});
 
 // ⏮ Previous Song
 prevButton.addEventListener("click", () => {
@@ -131,15 +134,21 @@ playButton.onclick = () => {
     }
 };
 
+// 🎵 Auto-Play Next Song When Current Song Ends
+audioPlayer.addEventListener("ended", () => {
+    if (songIndex < currentSongs.length - 1) {
+        songIndex++;
+        playSong();
+    }
+});
+
 // 🎵 Update Seekbar & Time
 audioPlayer.addEventListener("timeupdate", () => {
     if (!audioPlayer.duration) return;
 
-    // Update seekbar position
     let progress = (audioPlayer.currentTime / audioPlayer.duration) * 100;
     circle.style.left = `${progress}%`;
 
-    // Update time display
     let currentTime = formatTime(audioPlayer.currentTime);
     let duration = formatTime(audioPlayer.duration);
     songTimeDisplay.innerText = `${currentTime} / ${duration}`;
@@ -172,7 +181,7 @@ volumeIcon.addEventListener("click", () => {
         audioPlayer.volume = 0;
         volumeSlider.value = 0;
     } else {
-        audioPlayer.volume = 0.5; // Default volume when unmuting
+        audioPlayer.volume = 0.5;
         volumeSlider.value = 50;
     }
     updateVolumeIcon();
@@ -181,22 +190,10 @@ volumeIcon.addEventListener("click", () => {
 // 🎵 Update Volume Icon Based on Volume Level
 function updateVolumeIcon() {
     if (audioPlayer.volume === 0) {
-        volumeIcon.src = "img/mute.svg"; // Show mute icon
+        volumeIcon.src = "img/mute.svg";
     } else {
-        volumeIcon.src = "img/volume.svg"; // Show volume icon
+        volumeIcon.src = "img/volume.svg";
     }
-}
-
-// ⏭ **Auto-Play Next Song When Current Song Ends**
-audioPlayer.addEventListener("ended", playNextSong);
-
-function playNextSong() {
-    if (songIndex < currentSongs.length - 1) {
-        songIndex++; // Play next song
-    } else {
-        songIndex = 0; // Loop back to first song if it's the last song
-    }
-    playSong();
 }
 
 // 🌟 Load Playlists on Page Load
