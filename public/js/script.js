@@ -310,7 +310,7 @@ function updateVolumeIcon() {
     if (audioPlayer.volume === 0) {
         volumeIcon.src = "img/mute.svg"; // Show mute icon
     } else if (audioPlayer.volume < 0.5) {
-        volumeIcon.src = "img/low-volume.svg"; // Show low-volume icon
+        volumeIcon.src = "img/volume.svg"; // Show low-volume icon
     } else {
         volumeIcon.src = "img/volume.svg"; // Show normal volume icon
     }
