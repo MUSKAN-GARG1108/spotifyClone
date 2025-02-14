@@ -142,14 +142,16 @@ const songTimeDisplay = document.querySelector(".songtime");
 const playButton = document.getElementById("play");
 const nextButton = document.getElementById("next");
 const prevButton = document.getElementById("previous");
+const volumeIcon = document.querySelector(".volume img");
+const volumeSlider = document.querySelector(".volume input");
 
 let currentPlaylist = "";
 let songIndex = 0;
 let currentSongs = [];
 
-// 🚀 Load Playlists with Cover, Title, and Description
+// 🚀 Load Playlists
 async function loadPlaylists() {
-    playlistContainer.innerHTML = ''; // Clear existing playlists
+    playlistContainer.innerHTML = ''; 
 
     const playlists = [
         "Angry_(mood)", "Bright_(mood)", "Chill_(mood)", "Dark_(mood)",
@@ -182,7 +184,7 @@ async function loadPlaylists() {
     }
 }
 
-// 🎵 Load Songs when a Playlist is Clicked
+// 🎵 Load Songs
 async function loadSongs(playlist) {
     songContainer.innerHTML = "";
     currentPlaylist = playlist;
@@ -210,8 +212,7 @@ async function loadSongs(playlist) {
             songContainer.appendChild(li);
         });
 
-        // Auto-play first song
-        playSong();
+        playSong(); // Auto-play first song
 
     } catch (error) {
         console.error(`Failed to load songs for ${playlist}:`, error);
@@ -284,6 +285,35 @@ function formatTime(seconds) {
     let min = Math.floor(seconds / 60);
     let sec = Math.floor(seconds % 60);
     return `${min}:${sec < 10 ? "0" : ""}${sec}`;
+}
+
+// 🔊 Volume Control
+volumeSlider.addEventListener("input", () => {
+    audioPlayer.volume = volumeSlider.value / 100;
+    updateVolumeIcon();
+});
+
+// 🔇 Mute/Unmute Functionality
+volumeIcon.addEventListener("click", () => {
+    if (audioPlayer.volume > 0) {
+        audioPlayer.volume = 0;
+        volumeSlider.value = 0;
+    } else {
+        audioPlayer.volume = 0.5; // Default volume when unmuting
+        volumeSlider.value = 50;
+    }
+    updateVolumeIcon();
+});
+
+// 🎵 Update Volume Icon Based on Volume Level
+function updateVolumeIcon() {
+    if (audioPlayer.volume === 0) {
+        volumeIcon.src = "img/mute.svg"; // Show mute icon
+    } else if (audioPlayer.volume < 0.5) {
+        volumeIcon.src = "img/low-volume.svg"; // Show low-volume icon
+    } else {
+        volumeIcon.src = "img/volume.svg"; // Show normal volume icon
+    }
 }
 
 // 🌟 Load Playlists on Page Load
