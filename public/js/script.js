@@ -1,136 +1,3 @@
-// const backendURL = "https://spotifyclone-gvqn.onrender.com";
-// const playlistContainer = document.querySelector(".cardContainer");
-// const songContainer = document.querySelector(".songList ul");
-// const songInfo = document.querySelector(".songinfo");
-// const audioPlayer = new Audio();
-// const playButton = document.getElementById("play");
-// const nextButton = document.getElementById("next");
-// const prevButton = document.getElementById("previous");
-
-// let currentPlaylist = "";
-// let currentSongs = [];
-// let currentIndex = 0;
-
-// // 🚀 Load Playlists with Cover, Title, and Description
-// async function loadPlaylists() {
-//     playlistContainer.innerHTML = ''; // Clear existing playlists
-
-//     const playlists = [
-//         "Angry_(mood)", "Bright_(mood)", "Chill_(mood)", "Dark_(mood)",
-//         "Diljit", "Funky_(mood)", "Love_(mood)", "Uplifting_(mood)", "cs", "karan_aujla", "ncs"
-//     ];
-
-//     for (let playlist of playlists) {
-//         try {
-//             let response = await fetch(`${backendURL}/songs/${playlist}/info.json`);
-//             if (!response.ok) throw new Error(`Playlist info not found: ${playlist}`);
-
-//             let data = await response.json();
-
-//             let card = document.createElement('div');
-//             card.classList.add('card');
-//             card.innerHTML = `
-//                 <img src="${backendURL}/songs/${playlist}/cover.jpg" 
-//                      alt="${data.title}" 
-//                      class="cover-img" 
-//                      onerror="this.src='img/default-cover.jpg'">
-//                 <h3>${data.title}</h3>
-//                 <p>${data.description}</p>
-//             `;
-//             card.addEventListener("click", () => loadSongs(playlist));
-
-//             playlistContainer.appendChild(card);
-//         } catch (error) {
-//             console.error(`Failed to load ${playlist}:`, error);
-//         }
-//     }
-// }
-
-// // 🎵 Load Songs & Auto-Play First Song
-// async function loadSongs(playlist) {
-//     songContainer.innerHTML = "";
-//     currentPlaylist = playlist;
-//     currentSongs = [];
-//     currentIndex = 0;
-
-//     try {
-//         const response = await fetch(`${backendURL}/songs/${encodeURIComponent(playlist)}/info.json`);
-//         if (!response.ok) throw new Error(`Playlist not found: ${playlist}`);
-
-//         const playlistData = await response.json();
-//         currentSongs = playlistData.songs;
-
-//         if (!currentSongs || currentSongs.length === 0) {
-//             songContainer.innerHTML = `<p class="error-message">No songs available in this playlist</p>`;
-//             return;
-//         }
-
-//         currentSongs.forEach((song, index) => {
-//             const li = document.createElement("li");
-//             li.innerText = song.replace(".mp3", "");
-//             li.onclick = () => playSong(index);
-//             songContainer.appendChild(li);
-//         });
-
-//         playSong(0); // Auto-play first song
-
-//     } catch (error) {
-//         console.error(`Failed to load songs for ${playlist}:`, error);
-//         songContainer.innerHTML = `<p class="error-message">Failed to load songs</p>`;
-//     }
-// }
-
-// // ▶ Play a Song & Update Buttons
-// function playSong(index) {
-//     if (index < 0 || index >= currentSongs.length) return;
-
-//     currentIndex = index;
-//     audioPlayer.src = `${backendURL}/songs/${currentPlaylist}/${currentSongs[currentIndex]}`;
-//     audioPlayer.play();
-//     songInfo.innerText = `Playing: ${currentSongs[currentIndex].replace(".mp3", "")}`;
-//     playButton.src = "img/pause.svg"; // Change play button to pause
-// }
-
-// // ⏭ Next Song
-// nextButton.addEventListener("click", () => {
-//     if (currentIndex < currentSongs.length - 1) {
-//         playSong(currentIndex + 1);
-//     }
-// });
-
-// // ⏮ Previous Song
-// prevButton.addEventListener("click", () => {
-//     if (currentIndex > 0) {
-//         playSong(currentIndex - 1);
-//     }
-// });
-
-
-
-// // ⏯ Play/Pause Button
-// playButton.addEventListener("click", () => {
-//     if (audioPlayer.paused) {
-//         audioPlayer.play();
-//         playButton.src = "img/pause.svg";
-//     } else {
-//         audioPlayer.pause();
-//         playButton.src = "img/play.svg";
-//     }
-// });
-
-// // 🌟 Load Playlists on Page Load
-// window.onload = loadPlaylists;
-
-
-
-
-
-
-
-
-
-
-
 const backendURL = "https://spotifyclone-gvqn.onrender.com";
 const playlistContainer = document.querySelector(".cardContainer");
 const songContainer = document.querySelector(".songList ul");
@@ -154,17 +21,16 @@ const closeBtn = document.querySelector(".close-btn");
 const leftPanel = document.querySelector(".left");
 
 hamburger.addEventListener("click", () => {
-    leftPanel.classList.add("show"); // Show menu
+    leftPanel.classList.add("show");
 });
 
 closeBtn.addEventListener("click", () => {
-    leftPanel.classList.remove("show"); // Hide menu when close button is clicked
+    leftPanel.classList.remove("show");
 });
-
 
 // 🚀 Load Playlists
 async function loadPlaylists() {
-    playlistContainer.innerHTML = ''; 
+    playlistContainer.innerHTML = '';
 
     const playlists = [
         "Diljit", "karan_aujla", "ncs", "Flute_Music"
@@ -244,12 +110,7 @@ function playSong() {
 }
 
 // ⏭ Next Song
-nextButton.addEventListener("click", () => {
-    if (songIndex < currentSongs.length - 1) {
-        songIndex++;
-        playSong();
-    }
-});
+nextButton.addEventListener("click", playNextSong);
 
 // ⏮ Previous Song
 prevButton.addEventListener("click", () => {
@@ -321,11 +182,21 @@ volumeIcon.addEventListener("click", () => {
 function updateVolumeIcon() {
     if (audioPlayer.volume === 0) {
         volumeIcon.src = "img/mute.svg"; // Show mute icon
-    } else if (audioPlayer.volume < 0.5) {
-        volumeIcon.src = "img/volume.svg"; // Show low-volume icon
     } else {
-        volumeIcon.src = "img/volume.svg"; // Show normal volume icon
+        volumeIcon.src = "img/volume.svg"; // Show volume icon
     }
+}
+
+// ⏭ **Auto-Play Next Song When Current Song Ends**
+audioPlayer.addEventListener("ended", playNextSong);
+
+function playNextSong() {
+    if (songIndex < currentSongs.length - 1) {
+        songIndex++; // Play next song
+    } else {
+        songIndex = 0; // Loop back to first song if it's the last song
+    }
+    playSong();
 }
 
 // 🌟 Load Playlists on Page Load
