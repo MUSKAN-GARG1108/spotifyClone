@@ -151,7 +151,7 @@ let currentSongs = [];
 
 const hamburger = document.querySelector(".hamburger");
 const closeBtn = document.querySelector(".close-btn");
-const leftPanel = document.querySelector(".right");
+const leftPanel = document.querySelector(".left");
 
 hamburger.addEventListener("click", () => {
     leftPanel.classList.add("show"); // Show menu
