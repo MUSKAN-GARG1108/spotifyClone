@@ -1,12 +1,18 @@
 {
-    "title": "NCS Playlist",
-    "description": "Best NCS Tracks",
+    "title": "Hindi Hits",
+    "description": "Best Hindi SOngs",
     "songs": [
         "Jo Tum Mere Ho - Anuv Jain.mp3",
-        "Softly - Making Memories.mp3",
-        "song1.mp3",
-        "Tauba Tauba - Bad Newz.mp3",
         "Tu Hain Toh - Mr. And Mrs. Mahi.mp3",
-        "Ve Kamleya - Rocky Aur Rani Kii Prem Kahaani.mp3"
+        "Ve Kamleya - Rocky Aur Rani Kii Prem Kahani.mp3",
+        "Jo Tum Mere Ho - Anuv Jain.mp3",
+        "Kabira - Yeh Jawaani Hai Deewani.mp3",
+        "Pal Jalebi.mp3",
+        "Phir Aur Kya Chahiye - Arijit Singh.mp3",
+        "Tera Yaar Hoon Main - Sonu Ke Titu Ki Sweety.mp3",
+        "Tere Hawaale - Laal Singh Chaddha.mp3",
+        "Woh Din - Chhichhore.mp3",
+        "Agar Tum Saath Ho - Tamasha.mp3",
+        "Deva Deva (Film Version) - Brahmastra.mp3"
     ]
 }
