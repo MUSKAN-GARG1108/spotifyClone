@@ -154,8 +154,7 @@ async function loadPlaylists() {
     playlistContainer.innerHTML = ''; 
 
     const playlists = [
-        "Angry_(mood)", "Bright_(mood)", "Chill_(mood)", "Dark_(mood)",
-        "Diljit", "Funky_(mood)", "Love_(mood)", "Uplifting_(mood)", "cs", "karan_aujla", "ncs", "Flute_Music"
+        "Diljit", "karan_aujla", "ncs", "Flute_Music"
     ];
 
     for (let playlist of playlists) {
