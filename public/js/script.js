@@ -11,28 +11,31 @@ const nextButton = document.getElementById("next");
 const prevButton = document.getElementById("previous");
 const volumeIcon = document.querySelector(".volume img");
 const volumeSlider = document.querySelector(".volume input");
+const hamburger = document.querySelector(".hamburger");
+const closeBtn = document.querySelector(".close-btn");
+const leftPanel = document.querySelector(".left");
 
 let currentPlaylist = "";
 let songIndex = 0;
 let currentSongs = [];
 
-const hamburger = document.querySelector(".hamburger");
-const closeBtn = document.querySelector(".close-btn");
-const leftPanel = document.querySelector(".left");
-
+// 🎵 Show Hamburger Menu
 hamburger.addEventListener("click", () => {
-    leftPanel.classList.add("show"); // Show menu
+    leftPanel.classList.add("show");
 });
 
+// ❌ Close Hamburger Menu
 closeBtn.addEventListener("click", () => {
-    leftPanel.classList.remove("show"); // Hide menu
+    leftPanel.classList.remove("show");
 });
 
 // 🚀 Load Playlists
 async function loadPlaylists() {
-    playlistContainer.innerHTML = ''; 
+    playlistContainer.innerHTML = '';
 
-    const playlists = ["Diljit", "karan_aujla", "ncs", "Flute_Music"];
+    const playlists = [
+        "Diljit", "karan_aujla", "ncs", "Flute_Music"
+    ];
 
     for (let playlist of playlists) {
         try {
@@ -101,10 +104,13 @@ function playSong() {
     if (currentSongs.length === 0) return;
 
     const song = currentSongs[songIndex];
+    console.log(`Playing song: ${song}`);
+
     audioPlayer.src = `${backendURL}/songs/${currentPlaylist}/${song}`;
+    audioPlayer.load();  // Ensure the audio file is loaded properly
     audioPlayer.play();
     songInfo.innerText = `Playing: ${song.replace(".mp3", "")}`;
-    playButton.src = "img/pause.svg"; // Change icon to pause
+    playButton.src = "img/pause.svg";  // Update play/pause icon
 }
 
 // ⏭ Next Song
@@ -134,11 +140,14 @@ playButton.onclick = () => {
     }
 };
 
-// 🎵 Auto-Play Next Song When Current Song Ends
+// 🎵 Auto-Play Next Song on End
 audioPlayer.addEventListener("ended", () => {
+    console.log("Song ended! Trying to play next...");
     if (songIndex < currentSongs.length - 1) {
         songIndex++;
         playSong();
+    } else {
+        console.log("No more songs in the playlist.");
     }
 });
 
@@ -146,9 +155,11 @@ audioPlayer.addEventListener("ended", () => {
 audioPlayer.addEventListener("timeupdate", () => {
     if (!audioPlayer.duration) return;
 
+    // Update seekbar position
     let progress = (audioPlayer.currentTime / audioPlayer.duration) * 100;
     circle.style.left = `${progress}%`;
 
+    // Update time display
     let currentTime = formatTime(audioPlayer.currentTime);
     let duration = formatTime(audioPlayer.duration);
     songTimeDisplay.innerText = `${currentTime} / ${duration}`;
@@ -181,7 +192,7 @@ volumeIcon.addEventListener("click", () => {
         audioPlayer.volume = 0;
         volumeSlider.value = 0;
     } else {
-        audioPlayer.volume = 0.5;
+        audioPlayer.volume = 0.5; // Default volume when unmuting
         volumeSlider.value = 50;
     }
     updateVolumeIcon();
@@ -190,11 +201,24 @@ volumeIcon.addEventListener("click", () => {
 // 🎵 Update Volume Icon Based on Volume Level
 function updateVolumeIcon() {
     if (audioPlayer.volume === 0) {
-        volumeIcon.src = "img/mute.svg";
+        volumeIcon.src = "img/mute.svg"; // Show mute icon
+    } else if (audioPlayer.volume < 0.5) {
+        volumeIcon.src = "img/volume.svg"; // Show low-volume icon
     } else {
-        volumeIcon.src = "img/volume.svg";
+        volumeIcon.src = "img/volume.svg"; // Show normal volume icon
     }
 }
+
+// ⏭ Backup: Force Auto-Play Next Song if `ended` Fails
+setInterval(() => {
+    if (audioPlayer.currentTime > 0 && audioPlayer.currentTime === audioPlayer.duration) {
+        console.log("Forcing next song...");
+        if (songIndex < currentSongs.length - 1) {
+            songIndex++;
+            playSong();
+        }
+    }
+}, 1000);
 
 // 🌟 Load Playlists on Page Load
 window.onload = loadPlaylists;
