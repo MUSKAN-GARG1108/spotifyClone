@@ -149,6 +149,19 @@ let currentPlaylist = "";
 let songIndex = 0;
 let currentSongs = [];
 
+const hamburger = document.querySelector(".hamburger");
+const closeBtn = document.querySelector(".close-btn");
+const leftPanel = document.querySelector(".right");
+
+hamburger.addEventListener("click", () => {
+    leftPanel.classList.add("show"); // Show menu
+});
+
+closeBtn.addEventListener("click", () => {
+    leftPanel.classList.remove("show"); // Hide menu when close button is clicked
+});
+
+
 // 🚀 Load Playlists
 async function loadPlaylists() {
     playlistContainer.innerHTML = ''; 
