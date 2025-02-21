@@ -34,7 +34,7 @@ async function loadPlaylists() {
     playlistContainer.innerHTML = '';
 
     const playlists = [
-        "Diljit", "karan_aujla", "ncs", "Flute_Music"
+        "Diljit", "karan_aujla", "ncs", "Flute_Music", "English_Hits"
     ];
 
     for (let playlist of playlists) {
