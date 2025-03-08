@@ -12,7 +12,7 @@ const prevButton = document.getElementById("previous");
 const volumeIcon = document.querySelector(".volume img");
 const volumeSlider = document.querySelector(".volume input");
 const hamburger = document.querySelector(".hamburger");
-const closeBtn = document.querySelector(".close-btn");
+const closeBtn = document.querySelector(".close");
 const leftPanel = document.querySelector(".left");
 
 let currentPlaylist = "";
