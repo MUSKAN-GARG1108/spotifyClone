@@ -1,5 +1,5 @@
-// const backendURL = "https://spotifyclone-gvqn.onrender.com";
-const backendURL = "http://localhost:3000/";
+const backendURL = "https://spotifyclone-gvqn.onrender.com";
+// const backendURL = "http://localhost:3000/";
 const playlistContainer = document.querySelector(".cardContainer");
 const songContainer = document.querySelector(".songList ul");
 const songInfo = document.querySelector(".songinfo");
