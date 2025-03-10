@@ -481,3 +481,83 @@ body {
         left: 0; 
     }
 } */
+
+
+/* 🎵 Playlist Cards */
+.cardContainer {
+    margin: 30px;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    overflow-y: auto;
+    max-height: 60vh;
+    justify-content: flex-start; /* Align items to the left */
+}
+
+.card {
+    width: 200px; /* Default size */
+    padding: 10px;
+    border-radius: 5px;
+    background-color: #252525;
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.card:hover {
+    background-color: rgb(105, 103, 103);
+    cursor: pointer;
+    --a: 1;
+}
+
+.card img {
+    width: 100%;
+    border-radius: 5px;
+}
+
+.card h3 {
+    font-size: 16px;
+    margin-top: 8px;
+}
+
+.card p {
+    font-size: 14px;
+    color: #aaa;
+}
+
+/* 🎯 Responsive Fixes */
+@media (max-width: 768px) {
+    .cardContainer {
+        justify-content: flex-start; /* Keep alignment to the left */
+    }
+    .card {
+        width: 45%;
+        padding: 8px;
+    }
+    .card h3 {
+        font-size: 14px;
+    }
+    .card p {
+        font-size: 12px;
+    }
+}
+
+/* 📱 Extra Small Screens (Phones) */
+@media (max-width: 480px) {
+    .cardContainer {
+        justify-content: flex-start; /* Keep alignment to the left */
+    }
+    .card {
+        width: 40%;
+        padding: 6px;
+    }
+    .card img {
+        width: 100%;
+        height: auto;
+    }
+    .card h3 {
+        font-size: 12px;
+    }
+    .card p {
+        font-size: 10px;
+    }
+}
