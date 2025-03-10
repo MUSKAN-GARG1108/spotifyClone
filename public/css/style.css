@@ -403,9 +403,12 @@ body {
     .playbar{
         right: 25px;
     }
+    .left.show {
+        left: 0; 
+    }
 }
 
-@media (max-width: 500px) {
+/* @media (max-width: 500px) {
     .card {
         width: 100%;
     }
@@ -433,7 +436,7 @@ body {
     .left{ 
         width: 100vw;
     }   
-}
+} */
 
 .close-btn {
     position: absolute;
@@ -446,19 +449,19 @@ body {
     cursor: pointer;
 }
 
-.close-btn:hover {
-    color: red;
+.close:hover {
+    cursor: pointer;
 }
 
 
-@media (max-width: 768px) {
+/* @media (max-width: 768px) {
     .hamburger {
         display: block;
-        position: fixed; /* Keep it fixed at the top */
+        position: fixed; 
         top: 10px;
         left: 10px;
-        z-index: 1000; /* Ensure it stays above other elements */
-        background: rgba(0, 0, 0, 0.8); /* Add slight background */
+        z-index: 1000; 
+        background: rgba(0, 0, 0, 0.8); 
         padding: 10px;
         border-radius: 5px;
     }
@@ -467,7 +470,7 @@ body {
         position: fixed;
         top: 0;
         left: -100%;
-        width: 70%; /* Adjust width for mobile */
+        width: 70%; 
         height: 100vh;
         background: black;
         transition: left 0.3s ease-in-out;
@@ -475,6 +478,6 @@ body {
     }
 
     .left.show {
-        left: 0; /* Show when class "show" is added */
+        left: 0; 
     }
-}
+} */
